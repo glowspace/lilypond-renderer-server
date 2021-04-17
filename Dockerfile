@@ -37,6 +37,9 @@ RUN npm install -g svgo
 
 RUN apt-get -y install unzip
 
+RUN apt-get update
+RUN apt-get -y install inkscape
+
 COPY scripts/* /bin/scripts/
 RUN chmod +x /bin/scripts/*
 
@@ -67,3 +70,6 @@ ENTRYPOINT /shell2http -form \
     \
     GET:/get 'cd $v_dir && cat $v_file' \
     GET:/del 'rm -r $v_dir && echo "ok" || echo "not deleted"'
+
+# todo: fix make_test
+# todo: squash apt-gets

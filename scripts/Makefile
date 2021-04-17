@@ -5,17 +5,12 @@ DPI=300
 
 SHELL=/bin/bash
 
-# todo: add gzip and svg optimalizations
-# todo: add logfiles
-
-# V .PHONY uvádíme „falešné“ cíle, tzn. naše symbolická jména pro cíle, které 
-# neprodukují stejně pojmenované soubory jako výsledek své činnosti.
-.PHONY: svg eps svgcrop pdfcrop pngcrop svgcropcurves clean
-# all: dvi pdf ps
+# false targets
+.PHONY: svg eps pdf svgcrop pdfcrop pngcrop svgcropcurves clean
 svg: ${NAME}.svg
 eps: ${NAME}.eps
+pdf: ${NAME}.pdf
 svgcrop: ${NAME}_cropped.svg
-# svgcropz: ${NAME}_cropped.svgz
 pdfcrop: ${NAME}_cropped.pdf
 pngcrop: ${NAME}_cropped.png
 svgcropcurves: ${NAME}_cropped_curves.svg
@@ -29,7 +24,7 @@ clean:
 # zde „rm ...“ selže, pokud některý ze zadaných souborů již neexistuje) 
 # nezpůsobí zastavení provádění zbytku Makefile (např. zde nám nevadí, 
 # že se nepodařilo smazat soubory, které stejně neexistují).
-	-rm ${NAME}.{eps,svg}
+	-rm ${NAME}.{eps,svg,pdf}
 	-rm ${NAME}_cropped.svg
 
 ${NAME}.svg: ${NAME}.ly
@@ -39,6 +34,10 @@ ${NAME}.svg: ${NAME}.ly
 ${NAME}.eps: ${NAME}.ly
 	@echo -e "\n\n### EPS ###\n\n"
 	lilypond -dbackend=eps -dno-point-and-click --format=eps ${NAME}.ly > log.txt 2>&1 || (rm score.eps; exit 1)
+
+${NAME}.pdf: ${NAME}.ly
+	@echo -e "\n\n### PDF ###\n\n"
+	lilypond -dbackend=eps -dno-point-and-click --pdf ${NAME}.ly > log.txt 2>&1 || (rm score.pdf; exit 1)
 
 ${NAME}_cropped.pdf: ${NAME}.eps
 	@echo -e "\n\n### PDF cropped ###\n\n"
@@ -52,14 +51,18 @@ ${NAME}_cropped_curves.svg: ${NAME}_cropped.pdf
 	@echo -e "\n\n### SVG cropped - curves ###\n\n"
 	pdf2svg ${NAME}_cropped.pdf ${NAME}_cropped_curves.svg
 
-${NAME}_cropped.svg: ${NAME}.svg ${NAME}.eps
+${NAME}_cropped.svg: ${NAME}.svg
 	@echo -e "\n\n### SVG cropped ###\n\n"
 
 # 1. compute new svg box from EPS file
 # 2. replace it within the svg file (and remove width and height attributes)
 # 3. remove redundant tspan nodes causing font rendering trouble on Flutter
 # 4. optimize the svg with the svgo tool
-	svgbox="$(shell cat -v ${NAME}.eps | grep %%BoundingBox | /bin/scripts/svg_bbox.py)" && \
-	xmlstarlet ed -N svg='http://www.w3.org/2000/svg' -d '//svg:svg/@width' -d '//svg:svg/@height' -u '//svg:svg/@viewBox' -v "$$svgbox" ${NAME}.svg | \
-	sed 's/<tspan>//g; s/<\/tspan>//g' | \
-	svgo -i - -o ${NAME}_cropped.svg
+	sed -i 's/<tspan>//g; s/<\/tspan>//g' ${NAME}.svg && \
+	inkscape -z --export-area-drawing --export-plain-svg=${NAME}_cropped_tmp.svg ${NAME}.svg && \
+	svgo -i ${NAME}_cropped_tmp.svg -o ${NAME}_cropped.svg
+
+# && rm ${NAME}_cropped_tmp.svg
+
+# svgbox="$(shell cat -v ${NAME}.eps | grep %%BoundingBox | /bin/scripts/svg_bbox.py)" && 
+# xmlstarlet ed -N svg='http://www.w3.org/2000/svg' -d '//svg:svg/@width' -d '//svg:svg/@height' -u '//svg:svg/@viewBox' -v "$$svgbox" ${NAME}.svg | 
