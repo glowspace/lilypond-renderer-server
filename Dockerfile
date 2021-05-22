@@ -1,44 +1,22 @@
 # libwoff-dev has only a bionic package
 FROM ubuntu:bionic
 
-# RUN locale-gen en_US.UTF-8 && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
-# ENV LANG en_US.UTF-8
-# ENV LANGUAGE en_US:en
-# ENV LC_ALL en_US.UTF-8
+# install necessary software
+RUN apt-get update && \
+    apt-get -y install bzip2 wget ghostscript xmlstarlet python3 make tree pdf2svg curl unzip && \
+    # download and install GNU LilyPond 
+    wget https://lilypond.org/download/binaries/linux-64/lilypond-2.22.1-1.linux-64.sh && \
+    sh lilypond-2.22.1-1.linux-64.sh && rm lilypond-2.22.1-1.linux-64.sh && \
+    # download and install shell2http
+    wget https://github.com/msoap/shell2http/releases/download/1.13/shell2http-1.13.linux.amd64.tar.gz && \
+    tar -xf shell2http-1.13.linux.amd64.tar.gz && \
+    # install Node.js (for the svgo package)
+    curl -sL https://deb.nodesource.com/setup_12.x | bash && \
+    apt-get install -y nodejs && \
+    # install svgo
+    npm install -g svgo
 
-# install the lilypond package
-
-RUN apt-get update
-RUN apt-get -y install bzip2 
-RUN apt-get update
-RUN apt-get -y install wget
-
-RUN wget https://lilypond.org/download/binaries/linux-64/lilypond-2.22.0-1.linux-64.sh
-RUN sh lilypond-2.22.0-1.linux-64.sh && rm lilypond-2.22.0-1.linux-64.sh
-
-RUN apt-get -y install ghostscript
-
-RUN wget https://github.com/msoap/shell2http/releases/download/1.13/shell2http-1.13.linux.amd64.tar.gz && \
-    tar -xf shell2http-1.13.linux.amd64.tar.gz
-
-RUN apt-get -y install xmlstarlet
-RUN apt-get -y install python3
-RUN apt-get -y install make
-RUN apt-get -y install tree
-RUN apt-get -y install pdf2svg
-RUN apt-get -y install curl
-
-# Node.js 12 (for svgo)
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash
-RUN apt-get install -y nodejs
-
-# svg optimalization module
-RUN npm install -g svgo
-
-RUN apt-get -y install unzip
-
-RUN apt-get update
-RUN apt-get -y install inkscape
+# RUN apt-get -y install inkscape
 
 COPY scripts/* /bin/scripts/
 RUN chmod +x /bin/scripts/*
@@ -72,4 +50,3 @@ ENTRYPOINT /shell2http -form \
     GET:/del 'rm -r $v_dir && echo "ok" || echo "not deleted"'
 
 # todo: fix make_test
-# todo: squash apt-gets
