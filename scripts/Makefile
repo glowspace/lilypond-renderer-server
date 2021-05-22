@@ -29,7 +29,7 @@ ${NAME}.eps: ${NAME}.ly
 
 ${NAME}.pdf: ${NAME}.ly
 	@echo -e "\n\n### PDF ###\n\n"
-	lilypond -dbackend=eps -dno-point-and-click --pdf ${NAME}.ly > log.txt 2>&1 || (rm score.pdf; exit 1)
+	lilypond -dno-point-and-click --pdf ${NAME}.ly > log.txt 2>&1 || (rm score.pdf; exit 1)
 
 ${NAME}_cropped.pdf: ${NAME}.eps
 	@echo -e "\n\n### PDF cropped ###\n\n"
