@@ -5,11 +5,11 @@ DPI=300
 SHELL=/bin/bash
 
 # false targets
-.PHONY: svg eps pdf svgcrop pdfcrop pngcrop svgcropcurves clean
+.PHONY: svg eps pdf svgopt pdfcrop pngcrop svgcropcurves clean
 svg: ${NAME}.svg
 eps: ${NAME}.eps
 pdf: ${NAME}.pdf
-svgcrop: ${NAME}_cropped.svg
+svgopt: ${NAME}_optimized.svg
 pdfcrop: ${NAME}_cropped.pdf
 pngcrop: ${NAME}_cropped.png
 svgcropcurves: ${NAME}_cropped_curves.svg
@@ -29,7 +29,7 @@ ${NAME}.eps: ${NAME}.ly
 
 ${NAME}.pdf: ${NAME}.ly
 	@echo -e "\n\n### PDF ###\n\n"
-	lilypond -dbackend=eps -dno-point-and-click --pdf ${NAME}.ly > log.txt 2>&1 || (rm score.pdf; exit 1)
+	lilypond -dno-point-and-click --pdf ${NAME}.ly > log.txt 2>&1 || (rm score.pdf; exit 1)
 
 ${NAME}_cropped.pdf: ${NAME}.eps
 	@echo -e "\n\n### PDF cropped ###\n\n"
@@ -43,12 +43,9 @@ ${NAME}_cropped_curves.svg: ${NAME}_cropped.pdf
 	@echo -e "\n\n### SVG cropped - curves ###\n\n"
 	pdf2svg ${NAME}_cropped.pdf ${NAME}_cropped_curves.svg
 
-${NAME}_cropped.svg: ${NAME}.svg
-	@echo -e "\n\n### SVG cropped ###\n\n"
-
+${NAME}_optimized.svg: ${NAME}.svg
+	@echo -e "\n\n### SVG optimized ###\n\n"
 # 1. remove redundant tspan nodes causing font rendering trouble
-# 2. crop with inkscape
-# 3. optimize the svg with the svgo tool
+# 2. optimize the svg with the svgo tool
 	sed -i 's/<tspan>//g; s/<\/tspan>//g' ${NAME}.svg && \
-	inkscape -z --export-area-drawing --export-plain-svg=${NAME}_cropped_tmp.svg ${NAME}.svg && \
-	svgo -i ${NAME}_cropped_tmp.svg -o ${NAME}_cropped.svg
+	svgo -i ${NAME}_optimized_tmp.svg -o ${NAME}_optimized.svg
