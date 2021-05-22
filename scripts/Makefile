@@ -17,7 +17,7 @@ svgcropcurves: ${NAME}_cropped_curves.svg
 clean:
 	@echo -e "\n\n### Cleaning ###\n\n"
 	-rm ${NAME}.{eps,svg,pdf}
-	-rm ${NAME}_cropped.svg
+	-rm ${NAME}_optimized.svg
 
 ${NAME}.svg: ${NAME}.ly
 	@echo -e "\n\n### SVG ###\n\n"
@@ -29,7 +29,7 @@ ${NAME}.eps: ${NAME}.ly
 
 ${NAME}.pdf: ${NAME}.ly
 	@echo -e "\n\n### PDF ###\n\n"
-	lilypond -dno-point-and-click --pdf ${NAME}.ly > log.txt 2>&1 || (rm score.pdf; exit 1)
+	lilypond -dbackend=eps -dno-point-and-click --pdf ${NAME}.ly > log.txt 2>&1 || (rm score.pdf; exit 1)
 
 ${NAME}_cropped.pdf: ${NAME}.eps
 	@echo -e "\n\n### PDF cropped ###\n\n"
@@ -44,8 +44,9 @@ ${NAME}_cropped_curves.svg: ${NAME}_cropped.pdf
 	pdf2svg ${NAME}_cropped.pdf ${NAME}_cropped_curves.svg
 
 ${NAME}_optimized.svg: ${NAME}.svg
-	@echo -e "\n\n### SVG optimized ###\n\n"
+	@echo -e "\n\n### SVG cropped ###\n\n"
+
 # 1. remove redundant tspan nodes causing font rendering trouble
-# 2. optimize the svg with the svgo tool
+# 3. optimize the svg with the svgo tool
 	sed -i 's/<tspan>//g; s/<\/tspan>//g' ${NAME}.svg && \
-	svgo -i ${NAME}_optimized_tmp.svg -o ${NAME}_optimized.svg
+	svgo -i ${NAME}.svg -o ${NAME}_optimized.svg
