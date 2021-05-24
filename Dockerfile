@@ -43,10 +43,8 @@ ENTRYPOINT /shell2http -form \
     GET:/make_test 'TMPDIR=`mktemp XXXX -d` \
     && cd $TMPDIR \
     && ln -s /bin/scripts/Makefile \
-    && cp /scoresl/template.ly score.ly \
+    && echo "{ c }" > score.ly \
     && make $v_recipe > /dev/null; rm Makefile; cd ..; tree $TMPDIR -J -L 1 --noreport' \
     \
     GET:/get 'cd $v_dir && cat $v_file' \
     GET:/del 'rm -r $v_dir && echo "ok" || echo "not deleted"'
-
-# todo: fix make_test
