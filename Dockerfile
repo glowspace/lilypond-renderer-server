@@ -1,10 +1,12 @@
+# Lilypond container Dockerfile
+# Platform is forced to amd64 in order to make Dockerfile Apple silicon compatible.
 # libwoff-dev has only a bionic package
-FROM ubuntu:bionic
+FROM --platform=linux/amd64 ubuntu:bionic
 
 # install necessary software
 RUN apt-get update && \
     apt-get -y install bzip2 wget ghostscript xmlstarlet python3 make tree pdf2svg curl unzip && \
-    # download and install GNU LilyPond 
+    # download and install GNU LilyPond
     wget https://lilypond.org/download/binaries/linux-64/lilypond-2.22.1-1.linux-64.sh && \
     sh lilypond-2.22.1-1.linux-64.sh && rm lilypond-2.22.1-1.linux-64.sh && \
     # download and install shell2http
@@ -27,7 +29,7 @@ COPY fonts/*.otf /usr/local/lilypond/usr/share/lilypond/current/fonts/otf/
 WORKDIR /lilywork
 
 RUN adduser --disabled-password --gecos '' lilyponder && \
-    chown -R lilyponder /lilywork 
+    chown -R lilyponder /lilywork
 
 USER lilyponder
 
@@ -35,11 +37,11 @@ ENTRYPOINT /shell2http -form \
     POST:/make 'TMPDIR=`mktemp XXXX -d` \
     && cd $TMPDIR \
     && ln -s /bin/scripts/Makefile \
-    # if the .ly file is not provided, then 
-    # quietly unzip the zip file into current directory 
+    # if the .ly file is not provided, then
+    # quietly unzip the zip file into current directory
     && (cp $filepath_file_lilypond score.ly || unzip -qq $filepath_file_zip -d .)  \
     && make $v_recipe > /dev/null; rm Makefile; cd ..; tree $TMPDIR -J -L 1 --noreport' \
-    \   
+    \
     GET:/make_test 'TMPDIR=`mktemp XXXX -d` \
     && cd $TMPDIR \
     && ln -s /bin/scripts/Makefile \
