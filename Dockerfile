@@ -18,7 +18,21 @@ RUN apt-get update && \
     # install svgo
     npm install -g svgo
 
-# RUN apt-get -y install inkscape
+# install tools for building verovio
+RUN apt-get update && apt-get install -y software-properties-common build-essential
+
+# install cmake (requires the software-properties-common)
+RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add -
+RUN apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'    
+RUN apt-get update && apt-get install -y cmake
+
+# download and build verovio
+RUN wget https://github.com/rism-digital/verovio/archive/refs/tags/version-4.1.0.tar.gz && \
+    tar -xf version-4.1.0.tar.gz && \
+    cd verovio-version-4.1.0/tools && \
+    cmake ../cmake && \
+    make -j`nproc` && \
+    make install
 
 COPY scripts/* /bin/scripts/
 RUN chmod +x /bin/scripts/*

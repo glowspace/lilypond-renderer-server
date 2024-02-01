@@ -13,6 +13,7 @@ svgopt: ${NAME}_optimized.svg
 pdfcrop: ${NAME}_cropped.pdf
 pngcrop: ${NAME}_cropped.png
 svgcropcurves: ${NAME}_cropped_curves.svg
+svgxml: ${NAME}_mxml.svg
 
 clean:
 	@echo -e "\n\n### Cleaning ###\n\n"
@@ -50,3 +51,7 @@ ${NAME}_optimized.svg: ${NAME}.svg
 # 3. optimize the svg with the svgo tool
 	sed -i 's/<tspan>//g; s/<\/tspan>//g' ${NAME}.svg && \
 	svgo -i ${NAME}.svg -o ${NAME}_optimized.svg
+
+${NAME}_mxml.svg: ${NAME}.xml
+	@echo -e "\n\n### SVG/Verovio ###\n\n"
+	verovio ${NAME}.xml -o ${NAME}_mxml.svg --adjust-page-height --page-width 1200 --spacing-staff 5
