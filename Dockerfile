@@ -1,6 +1,5 @@
 # Lilypond container Dockerfile
 # Platform is forced to amd64 in order to make Dockerfile Apple silicon compatible.
-# libwoff-dev has only a bionic package
 FROM --platform=linux/amd64 ubuntu:focal
 
 # install necessary software
@@ -53,9 +52,11 @@ ENTRYPOINT /shell2http -form \
     POST:/make 'TMPDIR=`mktemp XXXX -d` \
     && cd $TMPDIR \
     && ln -s /bin/scripts/Makefile \
-    # if the .ly file is not provided, then
-    # quietly unzip the zip file into current directory
-    && (cp $filepath_file_lilypond score.ly || unzip -qq $filepath_file_zip -d .)  \
+    # try different names that may come from the `name` field of multipart POST data:
+    # 1. file_lilypond
+    # 2. file_xml
+    # 3. file_zip - quietly unzip the zip file into current directory
+    && (cp $filepath_file_lilypond score.ly || cp $filepath_file_xml score.xml || unzip -qq $filepath_file_zip -d .)  \
     && make $v_recipe > /dev/null; rm Makefile; cd ..; tree $TMPDIR -J -L 1 --noreport' \
     \
     GET:/make_test 'TMPDIR=`mktemp XXXX -d` \
