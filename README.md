@@ -1,5 +1,7 @@
 # LilyPond renderer server
 
+Update: now this server also supports rendering MusicXML files via Verovio renderer. More info coming soon.
+
 This is a specification of a simple HTTP API wrapper for the LilyPond CLI.
 It runs in a standalone Docker container. This repo contains three *.otf fonts,
 in the `fonts` folder. 
