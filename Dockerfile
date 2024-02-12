@@ -1,7 +1,7 @@
 # Lilypond container Dockerfile
 # Platform is forced to amd64 in order to make Dockerfile Apple silicon compatible.
 # libwoff-dev has only a bionic package
-FROM --platform=linux/amd64 ubuntu:bionic
+FROM --platform=linux/amd64 ubuntu:focal
 
 # install necessary software
 RUN apt-get update && \
@@ -13,7 +13,7 @@ RUN apt-get update && \
     wget https://github.com/msoap/shell2http/releases/download/1.13/shell2http-1.13.linux.amd64.tar.gz && \
     tar -xf shell2http-1.13.linux.amd64.tar.gz && \
     # install Node.js (for the svgo package)
-    curl -sL https://deb.nodesource.com/setup_12.x | bash && \
+    curl -fsSL https://deb.nodesource.com/setup_21.x | bash - && \
     apt-get install -y nodejs && \
     # install svgo
     npm install -g svgo
@@ -33,6 +33,8 @@ RUN wget https://github.com/rism-digital/verovio/archive/refs/tags/version-4.1.0
     cmake ../cmake && \
     make -j`nproc` && \
     make install
+
+# ---
 
 COPY scripts/* /bin/scripts/
 RUN chmod +x /bin/scripts/*
