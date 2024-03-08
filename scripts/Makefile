@@ -54,4 +54,4 @@ ${NAME}_optimized.svg: ${NAME}.svg
 
 ${NAME}_mxml.svg: ${NAME}.xml
 	@echo -e "\n\n### SVG/Verovio ###\n\n"
-	verovio ${NAME}.xml -o ${NAME}_mxml.svg --adjust-page-height --page-width 1200 --spacing-staff 5
+	verovio ${NAME}.xml -o ${NAME}_mxml.svg --adjust-page-height --page-width 1250 --spacing-staff 5 --min-last-justification 0.2
