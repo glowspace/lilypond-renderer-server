@@ -48,10 +48,13 @@ ${NAME}_optimized.svg: ${NAME}.svg
 	@echo -e "\n\n### SVG cropped ###\n\n"
 
 # 1. remove redundant tspan nodes causing font rendering trouble
-# 3. optimize the svg with the svgo tool
+# 2. optimize the svg with the svgo tool
 	sed -i 's/<tspan>//g; s/<\/tspan>//g' ${NAME}.svg && \
 	svgo -i ${NAME}.svg -o ${NAME}_optimized.svg
 
+# 1. render with verovio
+# 2. set bar numbers to invisible
 ${NAME}_mxml.svg: ${NAME}.xml
 	@echo -e "\n\n### SVG/Verovio ###\n\n"
-	verovio ${NAME}.xml -o ${NAME}_mxml.svg --adjust-page-height --page-width 1250 --spacing-staff 5 --min-last-justification 0.2
+	verovio ${NAME}.xml -o ${NAME}_mxml.svg --adjust-page-height --page-width 1250 --spacing-staff 5 --min-last-justification 0.2 && \
+	sed -i 's|, g.mNum{font-style:italic;}|{font-style:italic;} g.mNum{visibility:hidden;}|g' ${NAME}_mxml.svg
