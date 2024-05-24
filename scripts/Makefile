@@ -56,5 +56,7 @@ ${NAME}_optimized.svg: ${NAME}.svg
 # 2. set bar numbers to invisible
 ${NAME}_mxml.svg: ${NAME}.xml
 	@echo -e "\n\n### SVG/Verovio ###\n\n"
+# fix minor chords
+	sed -i 's|text="">minor</kind>|text="m">minor</kind>|g' ${NAME}.xml
 	verovio ${NAME}.xml -o ${NAME}_mxml.svg --adjust-page-height --page-width 1250 --spacing-staff 5 --min-last-justification 0.2 && \
 	sed -i 's|, g.mNum{font-style:italic;}|{font-style:italic;} g.mNum{visibility:hidden;}|g' ${NAME}_mxml.svg
