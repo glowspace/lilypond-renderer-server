@@ -37,7 +37,7 @@ def concatenate_svgs(input_files, output_file):
     spacing = 0
 
     # Create the new SVG content by stacking the SVGs vertically
-    new_svg_content = f'<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="{total_height}">'
+    new_svg_content = f'<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="{total_height}" viewBox="0 0 {total_width} {total_height}">'
     current_height = 0
 
     for svg_content, width, height in svg_contents:
