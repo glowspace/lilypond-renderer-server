@@ -1,5 +1,10 @@
 import argparse
 import xml.etree.ElementTree as ET
+import re
+
+def remove_xml_namespace(xml_str: str) -> str:
+    xml_str = re.sub(r"ns[01]\:", "", xml_str)
+    return xml_str
 
 # Function to extract SVG content and dimensions from a file
 def extract_svg_content_and_dimensions(file_path):
@@ -9,7 +14,8 @@ def extract_svg_content_and_dimensions(file_path):
         svg_element = root
         width = int(svg_element.attrib.get('width', '0').replace('px', ''))
         height = int(svg_element.attrib.get('height', '0').replace('px', ''))
-        return ET.tostring(svg_element, encoding='unicode'), width, height
+        output = ET.tostring(svg_element, encoding='unicode')
+        return remove_xml_namespace(output), width, height
 
 # Concatenate SVG files vertically
 def concatenate_svgs(input_files, output_file):
@@ -19,6 +25,9 @@ def concatenate_svgs(input_files, output_file):
 
     # Extract SVG content and dimensions for each input file
     for file in input_files:
+        if file == output_file:
+            continue
+
         svg_content, width, height = extract_svg_content_and_dimensions(file)
         svg_contents.append((svg_content, width, height))
         total_height += height
