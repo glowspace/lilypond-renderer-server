@@ -58,6 +58,5 @@ ${NAME}_mxml.svg: ${NAME}.xml
 	@echo -e "\n\n### SVG/Verovio ###\n\n"
 # fix minor chords
 	sed -i 's|text="">minor</kind>|text="m">minor</kind>|g' ${NAME}.xml
-	verovio ${NAME}.xml -o ${NAME}_mxml.svg --adjust-page-height --page-width 1250 --spacing-staff 5 --min-last-justification 0.2 --all-pages --header "none" && \
-	python3 /bin/scripts/svg_concat.py -i *.svg -o ${NAME}_mxml.svg
+	verovio ${NAME}.xml -o ${NAME}_mxml.svg --adjust-page-height --page-width 1250 --spacing-staff 5 --min-last-justification 0.2 && \
 	sed -i 's|, g.mNum{font-style:italic;}|{font-style:italic;} g.mNum{visibility:hidden;}|g' ${NAME}_mxml.svg
