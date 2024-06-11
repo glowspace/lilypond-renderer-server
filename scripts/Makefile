@@ -56,7 +56,8 @@ ${NAME}_optimized.svg: ${NAME}.svg
 # 2. set bar numbers to invisible
 ${NAME}_mxml.svg: ${NAME}.xml
 	@echo -e "\n\n### SVG/Verovio ###\n\n"
-# fix minor chords and then remove bar numbers from the final svg
+# fix minor chords and then remove bar numbers from the final svg, finally set the text fill to current color to comply with LP-generated svgs
 	sed -i 's|text="">minor</kind>|text="m">minor</kind>|g' ${NAME}.xml
 	verovio ${NAME}.xml -o ${NAME}_mxml.svg --adjust-page-height --page-width 1250 --spacing-staff 5 --min-last-justification 0.2 && \
-	xmlstarlet ed --inplace -N x=http://www.w3.org/2000/svg -d '//x:g[starts-with(@class, "mNum")]' ${NAME}_mxml.svg
+	xmlstarlet ed --inplace -N x=http://www.w3.org/2000/svg -d '//x:g[starts-with(@class, "mNum")]' ${NAME}_mxml.svg && \
+	sed -i 's|<text |<text fill="currentColor" |g' ${NAME}_mxml.svg
