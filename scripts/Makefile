@@ -22,7 +22,7 @@ clean:
 
 ${NAME}.svg: ${NAME}.ly
 	@echo -e "\n\n### SVG ###\n\n"
-	lilypond -dbackend=svg -dno-point-and-click -djob-count=4 --format=svg ${NAME}.ly > log.txt 2>&1 || (rm score.svg; exit 1)
+	lilypond -dbackend=cairo -dno-point-and-click -djob-count=4 --format=svg ${NAME}.ly > log.txt 2>&1 || (rm score.svg; exit 1)
 
 ${NAME}.eps: ${NAME}.ly
 	@echo -e "\n\n### EPS ###\n\n"
