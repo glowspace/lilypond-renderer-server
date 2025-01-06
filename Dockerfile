@@ -2,14 +2,17 @@
 # Platform is forced to amd64 in order to make Dockerfile Apple silicon compatible.
 FROM --platform=linux/amd64 ubuntu:focal
 
+RUN apt-get update && apt-get -y install bzip2 wget ghostscript xmlstarlet python3 make tree pdf2svg curl unzip
+
+# install Lilypond 2.24
+RUN wget https://gitlab.com/lilypond/lilypond/-/releases/v2.24.4/downloads/lilypond-2.24.4-linux-x86_64.tar.gz && \
+    tar -xf lilypond-2.24.4-linux-x86_64.tar.gz && \
+    rm lilypond-2.24.4-linux-x86_64.tar.gz
+
+ENV PATH="${PATH}:/lilypond-2.24.4/bin"
+
 # install necessary software
-RUN apt-get update && \
-    apt-get -y install bzip2 wget ghostscript xmlstarlet python3 make tree pdf2svg curl unzip && \
-    # download and install GNU LilyPond
-    wget https://lilypond.org/download/binaries/linux-64/lilypond-2.22.1-1.linux-64.sh && \
-    sh lilypond-2.22.1-1.linux-64.sh && rm lilypond-2.22.1-1.linux-64.sh && \
-    # download and install shell2http
-    wget https://github.com/msoap/shell2http/releases/download/1.13/shell2http-1.13.linux.amd64.tar.gz && \
+RUN wget https://github.com/msoap/shell2http/releases/download/1.13/shell2http-1.13.linux.amd64.tar.gz && \
     tar -xf shell2http-1.13.linux.amd64.tar.gz && \
     # install Node.js (for the svgo package)
     curl -fsSL https://deb.nodesource.com/setup_21.x | bash - && \
