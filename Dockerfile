@@ -5,11 +5,11 @@ FROM --platform=linux/amd64 ubuntu:focal
 RUN apt-get update && apt-get -y install bzip2 wget ghostscript xmlstarlet python3 make tree pdf2svg curl unzip
 
 # install Lilypond 2.24
-RUN wget https://gitlab.com/lilypond/lilypond/-/releases/v2.24.3/downloads/lilypond-2.24.3-linux-x86_64.tar.gz && \
-    tar -xf lilypond-2.24.3-linux-x86_64.tar.gz && \
-    rm lilypond-2.24.3-linux-x86_64.tar.gz
+RUN wget https://gitlab.com/lilypond/lilypond/-/releases/v2.24.4/downloads/lilypond-2.24.4-linux-x86_64.tar.gz && \
+    tar -xf lilypond-2.24.4-linux-x86_64.tar.gz && \
+    rm lilypond-2.24.4-linux-x86_64.tar.gz
 
-ENV PATH="${PATH}:/lilypond-2.24.3/bin"
+ENV PATH="${PATH}:/lilypond-2.24.4/bin"
 
 # install necessary software
 RUN wget https://github.com/msoap/shell2http/releases/download/1.13/shell2http-1.13.linux.amd64.tar.gz && \
